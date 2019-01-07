@@ -92,9 +92,15 @@ Oct 5 08:45:29 BornToSecHackMe sshd[7547]: Received disconnect from 161.202.39.3
 Oct 5 08:46:01 BornToSecHackMe CRON[7549]: pam_unix(cron:session): session opened for user lmezard by (uid=1040)
 ```
 we suppose that someone put password to login field and then, after couple seconds successfully loged in
+
 So, we try this cred to login the forum ```lmezard/!q\]Ej?*5K5cy*AJ```
+
 Boom! We're here!
+
 We can find email address for webmail. It's ```laurie@borntosec.net```.
+
 Try this email and same password. It's works!
+
 In there we find the letter with "DB Access" title. And get credentials ```root/Fg-'kKXBj87E:aJ$``` from letter.
+
 Use it to login phpmyadmin and it's works!.
