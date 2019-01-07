@@ -84,6 +84,8 @@ GENERATED WORDS: 4612
 ```
 phpmyadmin and webmail needs credentials.
 
+## Forum
+
 Research the forum and find 'Probleme login ?' topic, it's logs
 Check who log in. Find this:
 ```
@@ -97,10 +99,30 @@ So, we try this cred to login the forum ```lmezard/!q\]Ej?*5K5cy*AJ```
 
 Boom! We're here!
 
-We can find email address for webmail. It's ```laurie@borntosec.net```.
+## Webmail
+
+We can find email address on foroum for webmail. It's ```laurie@borntosec.net```.
 
 Try this email and same password. It's works!
 
 In there we find the letter with "DB Access" title. And get credentials ```root/Fg-'kKXBj87E:aJ$``` from letter.
 
-Use it to login phpmyadmin and it's works!.
+
+## phpMyAdmin
+Use this credentials to login phpmyadmin and it's works!
+
+```lmezard:G!@M6f4Eatau{sF"```
+
+## ftp
+
+brew install inetutils
+
+get the README and fun file. login is ```laurie```
+
+```
+file fun
+fun: POSIX tar archive (GNU)
+```
+
+fun file it's a archive.
+```tar xvf fun```
