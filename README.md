@@ -82,6 +82,7 @@ GENERATED WORDS: 4612
 + https://192.168.152.130/server-status (CODE:403|SIZE:297)
 ==> DIRECTORY: https://192.168.152.130/webmail/
 ```
+phpmyadmin and webmail needs credentials.
 
 Research the forum and find 'Probleme login ?' topic, it's logs
 Check who log in. Find this:
@@ -93,3 +94,7 @@ Oct 5 08:46:01 BornToSecHackMe CRON[7549]: pam_unix(cron:session): session opene
 we suppose that someone put password to login field and then, after couple seconds successfully loged in
 So, we try this cred to login the forum ```lmezard/!q\]Ej?*5K5cy*AJ```
 Boom! We're here!
+We can find email address for webmail. It's ```laurie@borntosec.net```.
+Try this email and same password. It's works!
+In there we find the letter with "DB Access" title. And get credentials ```root/Fg-'kKXBj87E:aJ$``` from letter.
+Use it to login phpmyadmin and it's works!.
