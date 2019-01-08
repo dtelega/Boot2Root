@@ -150,15 +150,37 @@ MY PASSWORD IS: Iheartpwnage
 Now SHA-256 it and submit%
 ```
 
-Use sha256 online generator and get: ```330B845F32185747E4F8CA15D40CA59796035C89EA809FB5D30F4DA83ECF45A4```
+Use sha256 online generator and get: ```330b845f32185747e4f8ca15d40ca59796035c89ea809fb5d30f4da83ecf45a4```
 ## ssh
 
 Try connect via ssh ```ssh root@IPaddress```. In out case is:
 ```
 ssh laurie@172.16.69.129
 ```
+What we get:
+```
+laurie@BornToSecHackMe:~$ ls -la
+total 37
+drwxr-x--- 1 laurie   laurie    80 Dec 23 18:27 .
+drwxrwx--x 1 www-data root      60 Oct 13  2015 ..
+-rwxr-x--- 1 laurie   laurie   432 Dec 23 18:30 .bash_history
+-rwxr-x--- 1 laurie   laurie   220 Oct  8  2015 .bash_logout
+-rwxr-x--- 1 laurie   laurie  3489 Oct 13  2015 .bashrc
+drwx------ 2 laurie   laurie    43 Oct 15  2015 .cache
+-rwxr-x--- 1 laurie   laurie   675 Oct  8  2015 .profile
+drwx------ 2 laurie   laurie    60 Dec 23 18:28 .ssh
+-rw------- 1 laurie   laurie   606 Oct 13  2015 .viminfo
+-rwxr-x--- 1 laurie   laurie   158 Oct  8  2015 README
+-rwxr-x--- 1 laurie   laurie 26943 Oct  8  2015 bomb
+```
 
-We're in! Get the README file:
+Get the files:
+```
+scp laurie@172.16.69.129:bomb .
+scp laurie@172.16.69.129:README .
+```
+
+README file:
 ```
 Diffuse this bomb!
 When you have all the password use it as "thor" user with ssh.
