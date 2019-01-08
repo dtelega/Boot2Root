@@ -109,20 +109,68 @@ In there we find the letter with "DB Access" title. And get credentials ```root/
 
 
 ## phpMyAdmin
+
 Use this credentials to login phpmyadmin and it's works!
 
 ```lmezard:G!@M6f4Eatau{sF"```
 
 ## ftp
 
-brew install inetutils
-
-get the README and fun file. login is ```laurie```
+```brew install inetutils```
+```ftp [YOUR IP]```
+use lmezard:G!@M6f4Eatau{sF" credentials
 
 ```
-file fun
-fun: POSIX tar archive (GNU)
+get fun
+get README
+bye
 ```
+
+get the README and fun file.
+```
+Complete this little challenge and use the result as password for user 'laurie' to login in ssh
+
+```
+
+login is ```laurie```
 
 fun file it's a archive.
-```tar xvf fun```
+
+``` tar xf fun ```
+
+It's a lot files with code, written in C.
+
+Try to concatinate it with script.```node crackFunFile.js```
+
+Compile the code.
+
+Get the result:
+```
+MY PASSWORD IS: Iheartpwnage
+Now SHA-256 it and submit%
+```
+
+Use sha256 online generator and get: ```330B845F32185747E4F8CA15D40CA59796035C89EA809FB5D30F4DA83ECF45A4```
+## ssh
+
+Try connect via ssh ```ssh root@IPaddress```. In out case is:
+```
+ssh laurie@172.16.69.129
+```
+
+We're in! Get the README file:
+```
+Diffuse this bomb!
+When you have all the password use it as "thor" user with ssh.
+
+HINT:
+P
+ 2
+ b
+
+o
+4
+
+NO SPACE IN THE PASSWORD (password is case sensitive).
+```
+
