@@ -1,0 +1,5 @@
+node translaror.js turtle
+
+- copy command from translated-cmd.js file
+- visit ``` http://ecs.fullerton.edu/~ic07/javascript-turtle/ ``` and put commands here
+- draw
