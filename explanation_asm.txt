@@ -3,39 +3,41 @@ https://ru.wikibooks.org/wiki/%D0%90%D1%81%D1%81%D0%B5%D0%BC%D0%B1%D0%BB%D0%B5%D
 1. $ gdb bomb
 
 2. disassemble main
-Видим там вызовы функций phase_1 ... _6
-и phase_defused
+You can see here functions phase_1 ... _6
+and phase_defused
 
-2. Заранее ставим брейпоинты
+2. Paste breakpoints
 $ break phase_1
 ...
 $ break phase_6
 
-3. Дизасемблируем phase_1
+3. Disassemble phase_1
 $ disassemble phase_1
 
 $ x/s  0x80497c0 константа "Public speaking is very easy."
 
-0x08048b20 <+0>:	push   %ebp  			; сохраняем регистр
-0x08048b21 <+1>:	mov    %esp,%ebp		; помещаем значение эбп в эсп
-0x08048b23 <+3>:	sub    $0x8,%esp		; отнимаем значение по адресу 0х8 от регистра эсп и сохраняем в эсп
-0x08048b26 <+6>:	mov    0x8(%ebp),%eax	; ?? что то связано с офсетами или indirect move (не думаю что оно нам нужно)
-0x08048b29 <+9>:	add    $0xfffffff8,%esp	; сумируем 
-0x08048b2c <+12>:	push   $0x80497c0		; заносим указатель на строку
-0x08048b31 <+17>:	push   %eax				; заносим введенный аргумент
-0x08048b32 <+18>:	call   0x8049030 <strings_not_equal> ; вызов функции с этими аргументами
+0x08048b20 <+0>:	push   %ebp  			; save register on stack
+0x08048b21 <+1>:	mov    %esp,%ebp		; move esp into ebp
+0x08048b23 <+3>:	sub    $0x8,%esp
+0x08048b26 <+6>:	mov    0x8(%ebp),%eax
+0x08048b29 <+9>:	add    $0xfffffff8,%esp
+0x08048b2c <+12>:	push   $0x80497c0		; save pointer to string on stack
+0x08048b31 <+17>:	push   %eax				; save argument on stack
+0x08048b32 <+18>:	call   0x8049030 <strings_not_equal> ; call func 
 0x08048b37 <+23>:	add    $0x10,%esp
 0x08048b3a <+26>:	test   %eax,%eax
 0x08048b3c <+28>:	je     0x8048b43 <phase_1+35>
 0x08048b3e <+30>:	call   0x80494fc <explode_bomb>
-0x08048b43 <+35>:	mov    %ebp,%esp	; возвращаем значение стека
-0x08048b45 <+37>:	pop    %ebp			; 
+0x08048b43 <+35>:	mov    %ebp,%esp
+0x08048b45 <+37>:	pop    %ebp
 0x08048b46 <+38>:	ret
 
-ОТВЕТ: Public speaking is very easy.
+Just compare string and if they are equal pass to next phase
+
+ANSWER: Public speaking is very easy.
 
 
-4. Дизасемблируем phase_2
+4. Disassemble phase_2
    0x08048b48 <+0>:	push   %ebp
    0x08048b49 <+1>:	mov    %esp,%ebp
    0x08048b4b <+3>:	sub    $0x20,%esp
@@ -69,35 +71,34 @@ $ x/s  0x80497c0 константа "Public speaking is very easy."
    0x08048b96 <+78>:	ret
 
 
-0x08048b5b <+19>:	call   0x8048fd8 <read_six_numbers>   ; читаем с клавиатуры числа и записываем их в регистры
+0x08048b5b <+19>:	call   0x8048fd8 <read_six_numbers>   ; read numbers from keyboard
 0x08048b60 <+24>:	add    $0x10,%esp 					
-0x08048b63 <+27>:	cmpl   $0x1,-0x18(%ebp)				; сравниваем первое число (эбп - 0х18) с 1 и если не развно, бомба взрываеться
+0x08048b63 <+27>:	cmpl   $0x1,-0x18(%ebp)				; compare first argumt with 1, if it is not equal than KO
 0x08048b67 <+31>:	je     0x8048b6e <phase_2+38>		; 
 0x08048b69 <+33>:	call   0x80494fc <explode_bomb>		;
-0x08048b6e <+38>:	mov    $0x1,%ebx					; в эбх занесли 1. это счетчик
-0x08048b73 <+43>:	lea    -0x18(%ebp),%esi				; в эси адрес эбп - 0х18
-0x08048b76 <+46>:	lea    0x1(%ebx),%eax				; в эах адрес эбх - 0х1
-0x08048b79 <+49>:	imul   -0x4(%esi,%ebx,4),%eax		; эах = (эбх * 4) + эси - 0х4
-0x08048b7e <+54>:	cmp    %eax,(%esi,%ebx,4)			; сравнить эах и (эбх * 4) + эси
-0x08048b81 <+57>:	je     0x8048b88 <phase_2+64>		; перейти на адрес +64 если равны
+0x08048b6e <+38>:	mov    $0x1,%ebx					; ebx is counter, set it to 1
+0x08048b73 <+43>:	lea    -0x18(%ebp),%esi				; esi = 1st argument
+0x08048b76 <+46>:	lea    0x1(%ebx),%eax				; eax = ebx + 1
+0x08048b79 <+49>:	imul   -0x4(%esi,%ebx,4),%eax		; eax = (ebx * 4) + esi - 4
+0x08048b7e <+54>:	cmp    %eax,(%esi,%ebx,4)			; compare eax and (ebx * 4) + esi
+0x08048b81 <+57>:	je     0x8048b88 <phase_2+64>		; got to  + 64 if equal
 0x08048b83 <+59>:	call   0x80494fc <explode_bomb>
 
-														; каждое следующее число должно быть равно текущему число умноженному на
-														; на следующую позицию
-														; ОТВЕТ: 1 2 6 24 120 720
+                                          ; each next number must be equal to current number multiplied by next position
+														; ANSWER: 1 2 6 24 120 720
 
-0x08048b88 <+64>:	inc    %ebx							; увеличиваем эбх
-0x08048b89 <+65>:	cmp    $0x5,%ebx					; возвращаемся на 46 строку если эбх меньше или равен 5 
-0x08048b8c <+68>:	jle    0x8048b76 <phase_2+46>		; 
+0x08048b88 <+64>:	inc    %ebx							; inc ebx
+0x08048b89 <+65>:	cmp    $0x5,%ebx					; back to 46 line if ebx is less or equal to 46
+0x08048b8c <+68>:	jle    0x8048b76 <phase_2+46> 
 
-subl -0x20(%ebx,%ecx,0x4),%eax (AT&T)  # записать в EAX значение (ECX * 4) + EBX - 32
+subl -0x20(%ebx,%ecx,0x4),%eax (AT&T)  #  EAX = (ECX * 4) + EBX - 32
 
-ОТВЕТ: 1 2 6 24 120 720
-
+ANSWER: 1 2 6 24 120 720
 
 
 
-5. Дизасемблируем phase_3
+
+5. Disassemble phase_3
 Dump of assembler code for function phase_3:
 
 0x08048b98 <+0>:	push   %ebp
@@ -177,33 +178,26 @@ Dump of assembler code for function phase_3:
 0x08048c9f <+263>:	ret
 
 В ридмифайле есть подсказка, второй аргумент b
+Look at README, it contains a hint
 
-эбп + с первый аргумент
-эбп + 5 второй
-+ 4 третий 
+ebp + с 1st arg
+ebp + 5 2nd
+ebp + 4 3rd 
 
 
 0x80497de ====== "%d %c %d"
-Значит нужно ввести число, символ, число
+Means we must enter number, char, number.
 
 0x08048bbf <+39>:	cmp    $0x2,%eax
 0x08048bc2 <+42>:	jg     0x8048bc9 <phase_3+49>
-От 2-ки отнимаеться значение еах
-В еах лежит первое введеное число
-jg если 2 - еах > 0 то все ок, иначе бомба взрываеться
-
-0x08048bc9 <+49>:	cmpl   $0x7,-0xc(%ebp)
-0x08048bcd <+53>:	ja     0x8048c88 <phase_3+240>
-Эбп указывает на стек
-Если (эбп - 0хс) - 7 меньше нуля то прыгаем в конец и взрываемся
-И по коду много таких моментов
-
+If you pass 2 arguments or less, than KO
 
 0x08048bd3 <+59>:	mov    -0xc(%ebp),%eax
 0x08048bd6 <+62>:	jmp    *0x80497e8(,%eax,4)
-Поместить в эах аргумент , свич кейс
+EAX contains 1st arguments
+Swith case by it
 
-Наш кейс
+Target case:
 0x08048c00 <+104>:	mov    $0x62,%bl
 0x08048c02 <+106>:	cmpl   $0xd6,-0x4(%ebp)
 0x08048c09 <+113>:	je     0x8048c8f <phase_3+247>
@@ -218,12 +212,12 @@ jg если 2 - еах > 0 то все ок, иначе бомба взрыва�
 0x08048c9e <+262>:	pop    %ebp
 0x08048c9f <+263>:	ret
 
-ОТВЕТ: 1 b 214
+ANSWER: 1 b 214
 
 
 
 
-6. Дизасемблируем phase_4
+6. Disassemble phase_4
 
 Dump of assembler code for function phase_4:
 0x08048ce0 <+0>:	push   %ebp
@@ -237,9 +231,9 @@ Dump of assembler code for function phase_4:
 0x08048cf5 <+21>:	push   %edx
 0x08048cf6 <+22>:	call   0x8048860 <sscanf@plt>
 0x08048cfb <+27>:	add    $0x10,%esp
-0x08048cfe <+30>:	cmp    $0x1,%eax				; если не один аргумент введен, то вылетаем
+0x08048cfe <+30>:	cmp    $0x1,%eax				; if entered notheng, than KO
 0x08048d01 <+33>:	jne    0x8048d09 <phase_4+41>
-0x08048d03 <+35>:	cmpl   $0x0,-0x4(%ebp)			; если ввечедное число больше нуля, то все ок
+0x08048d03 <+35>:	cmpl   $0x0,-0x4(%ebp)			; if entered number is bigger than 0, than OK
 0x08048d07 <+39>:	jg     0x8048d0e <phase_4+46>
 0x08048d09 <+41>:	call   0x80494fc <explode_bomb>
 0x08048d0e <+46>:	add    $0xfffffff4,%esp
@@ -247,13 +241,15 @@ Dump of assembler code for function phase_4:
 0x08048d14 <+52>:	push   %eax
 0x08048d15 <+53>:	call   0x8048ca0 <func4>
 0x08048d1a <+58>:	add    $0x10,%esp
-0x08048d1d <+61>:	cmp    $0x37,%eax				; если функ4 вернула 0х37 то все ок
+0x08048d1d <+61>:	cmp    $0x37,%eax				; if func4 return 0x37, than OK
 0x08048d20 <+64>:	je     0x8048d27 <phase_4+71>
 0x08048d22 <+66>:	call   0x80494fc <explode_bomb>
 0x08048d27 <+71>:	mov    %ebp,%esp
 0x08048d29 <+73>:	pop    %ebp
 0x08048d2a <+74>:	ret    
 End of assembler dump.
+
+Contains bonus pasrt
 
 
 Dump of assembler code for function func4:
@@ -262,12 +258,12 @@ Dump of assembler code for function func4:
 0x08048ca3 <+3>:	sub    $0x10,%esp
 0x08048ca6 <+6>:	push   %esi
 0x08048ca7 <+7>:	push   %ebx
-0x08048ca8 <+8>:	mov    0x8(%ebp),%ebx			; в эбх аргумент, в эах то что передано функции
+0x08048ca8 <+8>:	mov    0x8(%ebp),%ebx			; in ebx argument, in eax function passed argument
 0x08048cab <+11>:	cmp    $0x1,%ebx
-0x08048cae <+14>:	jle    0x8048cd0 <func4+48>		; аргумент меньше 1, возвращаем 1
+0x08048cae <+14>:	jle    0x8048cd0 <func4+48>		; erg less then 1, return 1
 0x08048cb0 <+16>:	add    $0xfffffff4,%esp
-0x08048cb3 <+19>:	lea    -0x1(%ebx),%eax			; эбх - 1 заносим в эах
-0x08048cb6 <+22>:	push   %eax						; пердаем этот арг и вызываем функцию
+0x08048cb3 <+19>:	lea    -0x1(%ebx),%eax			; eax = (ebx - 1) 
+0x08048cb6 <+22>:	push   %eax						; pass arg and call func
 0x08048cb7 <+23>:	call   0x8048ca0 <func4>
 0x08048cbc <+28>:	mov    %eax,%esi
 0x08048cbe <+30>:	add    $0xfffffff4,%esp
@@ -286,21 +282,12 @@ Dump of assembler code for function func4:
 0x08048cdd <+61>:	ret    
 End of assembler dump.
 
-путем проб найдено число 9
-
-ОТВЕТ: 9
-
-
-
-Значит ввести нужно один элемент
-$ x/s 0x8049808
-0x8049808:	 "%d"
+ANSWER: 9
 
 
 
 
-
-7. Дизасемблируем phase_5
+7. Disassemble phase_5
 
 Dump of assembler code for function phase_5:
 0x08048d2c <+0>:	push   %ebp
@@ -316,7 +303,7 @@ Dump of assembler code for function phase_5:
 0x08048d43 <+23>:	cmp    $0x6,%eax
 0x08048d46 <+26>:	je     0x8048d4d <phase_5+33>
 0x08048d48 <+28>:	call   0x80494fc <explode_bomb>
-0x08048d4d <+33>:	xor    %edx,%edx				; эдх = 0
+0x08048d4d <+33>:	xor    %edx,%edx				; edx = 0
 0x08048d4f <+35>:	lea    -0x8(%ebp),%ecx
 0x08048d52 <+38>:	mov    $0x804b220,%esi
 0x08048d57 <+43>:	mov    (%edx,%ebx,1),%al
@@ -345,8 +332,7 @@ Dump of assembler code for function phase_5:
 0x08048d94 <+104>:	ret    
 End of assembler dump.
 
-
-Длина введенной строки должна быть 6 байт
+Length of entered string must be 6
 0x08048d3b <+15>:	call   0x8049018 <string_length>
 0x08048d40 <+20>:	add    $0x10,%esp
 0x08048d43 <+23>:	cmp    $0x6,%eax
@@ -359,7 +345,7 @@ $ x/s 0x804b220
 0x804b220 <array.123>:	 "isrveawhobpnutfg\260\001"
 
 
-Составляем паттерн
+Making pattern
  abcdefghijklmno
 pqrstuvwxyz
 ----------------
@@ -377,15 +363,13 @@ isrveawhobpnutfg
 0x08048d66 <+58>:	cmp    $0x5,%edx
 0x08048d69 <+61>:	jle    0x8048d57 <phase_5+43>
 
-Заменяем введенную строку по этому патерну 
+Replace entered string by this pattern
 str[i] = isrvea..[str[i] & 0xf]
 
-Получаем opekmq
-
-ОТВЕТ: opekmq
+ANSWER: opekmq
 
 
-7. Дизасемблируем phase_6
+7. Disassemble phase_6
 
 Dump of assembler code for function phase_6:
 0x08048d98 <+0>:	push   %ebp
@@ -481,19 +465,19 @@ Dump of assembler code for function phase_6:
 0x08048e90 <+248>:	ret    
 End of assembler dump.
 
+Read 6 numbers
+Check if they are not equal to each other
+Sort array by this numbers
 
-Прочитать 6 числе и отсортировать массив в завивимости от єтих чисел
-Проверить не развны ли эти числа между собой
-
-ОТВЕТ: 4 2 6 3 1 5
+ANSWER: 4 2 6 3 1 5
 
 
- После этого склеить все пароли воедино и использовать для юзера тора
+After this, concatenate all passwords and remove spaces
 
-Этот не подходит
+This one is not right
 Publicspeakingisveryeasy.126241207201b2149opekmq426315
 
-Подсмотрели и поняли что нужно этот
+Look at forum, and find answer
 Publicspeakingisveryeasy.126241207201b2149opekmq426135
 
 
